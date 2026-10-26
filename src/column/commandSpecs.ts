@@ -4,7 +4,7 @@
 // nessun id compaia due volte e che ogni comando sia raggiungibile.
 
 /**
- * header       in alto a sinistra: il nome del foglio (L0)
+ * header       in alto: il nome del foglio a sinistra, "?" (scorciatoie) a destra (L0)
  * edgeTab      strisce sui bordi: Tabula a sinistra, Palimpsestus a destra (L0)
  * bar          barretta (libera o agganciata in alto) e i suoi popover (L0/L1)
  * tabulaBar    barretta della Tabula
@@ -31,6 +31,7 @@ export const COMMANDS: CommandSpec[] = [
   // barra in alto
   // in alto a sinistra: il nome del foglio, che si modifica con un clic
   { id: 'sheet.rename', label: 'cmd.sheet.rename', home: 'header', shortcut: 'Mod+R' },
+  { id: 'app.help', label: 'cmd.app.help', home: 'header', shortcut: 'F1' },
 
   // strisce sui bordi: la Tabula a sinistra, il Palimpsestus a destra
   { id: 'tabula.toggle', label: 'cmd.tabula.toggle', home: 'edgeTab', shortcut: 'Mod+1' },
@@ -93,7 +94,6 @@ export const COMMANDS: CommandSpec[] = [
 
   // dell'app (per nome)
   { id: 'app.prefs', label: 'cmd.app.prefs', home: 'none', shortcut: 'Mod+,' },
-  { id: 'app.help', label: 'cmd.app.help', home: 'none' },
   { id: 'app.about', label: 'cmd.app.about', home: 'none' },
   { id: 'app.quit', label: 'cmd.app.quit', home: 'none', shortcut: 'Mod+Q' },
 
@@ -112,7 +112,7 @@ export const COMMANDS: CommandSpec[] = [
 
 /** Controlli sempre visibili (L0) per superficie, in ordine. Il segmentato delle viste e' uno solo. */
 export const L0: Record<'header' | 'edgeTab' | 'bar' | 'tabulaBar' | 'versionsBar', string[][]> = {
-  header: [['sheet.rename']],
+  header: [['sheet.rename'], ['app.help']],
   edgeTab: [['tabula.toggle'], ['versions.toggle']],
   bar: [['text.style'], ['text.bold', 'text.italic', 'text.underline', 'text.strike', 'text.align'], ['text.color'], ['text.insert'], ['timer.toggle'], ['counts.open'], ['export.menu', 'sheet.saveAs', 'sheet.toCompendium']],
   tabulaBar: [['tabula.add'], ['tabula.find'], ['tabula.zoomOut', 'tabula.zoomIn', 'tabula.fit']],

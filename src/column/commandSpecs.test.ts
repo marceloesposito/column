@@ -33,9 +33,9 @@ describe("un'azione, un controllo", () => {
 
   it('al massimo 10 controlli sempre visibili per superficie', () => {
     for (const [surface, groups] of Object.entries(L0)) expect(groups.length, surface).toBeLessThanOrEqual(10);
-    // e in tutto lo schermo (cima, strisce, barretta) non piu' di 10
-    expect(L0.header.length + L0.edgeTab.length + L0.bar.length).toBeLessThanOrEqual(10);
-    // in alto solo il nome del foglio
-    expect(L0.header).toEqual([['sheet.rename']]);
+    // e in tutto lo schermo (cima, strisce, barretta) non piu' di 10, piu' il "?" delle scorciatoie
+    expect(L0.header.length + L0.edgeTab.length + L0.bar.length).toBeLessThanOrEqual(11);
+    // in alto solo il nome del foglio e il "?"
+    expect(L0.header).toEqual([['sheet.rename'], ['app.help']]);
   });
 });

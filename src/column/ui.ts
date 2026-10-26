@@ -1,9 +1,9 @@
-// Stato dell'interfaccia: quale popover e' aperto (uno solo alla volta), finestre, ⌘K, la Tabula
+// Stato dell'interfaccia: quale popover e' aperto (uno solo alla volta), finestre, ⌘K, scorciatoie, la Tabula
 // visibile e la versione selezionata nel Palimpsestus.
 import { create } from 'zustand';
 
 export type PopoverId = 'export' | 'style' | 'align' | 'color' | 'insert' | 'timer' | 'counts' | 'tabulaAdd' | 'tabulaFind';
-export type DialogId = 'prefs' | 'help' | 'about' | 'saveAs';
+export type DialogId = 'prefs' | 'about' | 'saveAs';
 
 export interface TabulaApi {
   zoomIn(): void;
@@ -16,6 +16,8 @@ interface UiState {
   popover: PopoverId | null;
   dialog: DialogId | null;
   palette: boolean;
+  /** foglio delle scorciatoie, in basso */
+  shortcuts: boolean;
   tabula: TabulaApi | null;
   /** versione selezionata nell'albero */
   selectedVersion: string | null;
@@ -25,12 +27,14 @@ interface UiState {
   close(): void;
   setDialog(d: DialogId | null): void;
   setPalette(on: boolean): void;
+  setShortcuts(on: boolean): void;
 }
 
 export const useUi = create<UiState>((set, get) => ({
   popover: null,
   dialog: null,
   palette: false,
+  shortcuts: false,
   tabula: null,
   selectedVersion: null,
   front: 'tabula',
@@ -45,5 +49,8 @@ export const useUi = create<UiState>((set, get) => ({
   },
   setPalette(on) {
     set({ palette: on, popover: null });
+  },
+  setShortcuts(on) {
+    set({ shortcuts: on, popover: null });
   },
 }));
