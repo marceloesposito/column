@@ -110,7 +110,7 @@ const RUN: Record<string, Runner> = {
   'comment.delete': { run: () => undefined },
 
   'app.prefs': { run: () => useUi.getState().setDialog('prefs') },
-  'app.help': { run: () => useUi.getState().setDialog('help') },
+  'app.help': { run: () => useUi.getState().setShortcuts(!useUi.getState().shortcuts), active: () => useUi.getState().shortcuts },
   'app.about': { run: () => useUi.getState().setDialog('about') },
   'app.quit': { run: lazy(() => import('./actions'), (m) => m.quit()) },
 

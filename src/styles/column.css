@@ -2405,3 +2405,88 @@ select.fx-input {
     display: none;
   }
 }
+
+/* ---------------------------------------------------------------- foglio delle scorciatoie */
+/* il "?" in alto a destra */
+.fx-help-btn {
+  color: var(--muted);
+}
+
+/* sale dal fondo della finestra, a tutta larghezza, sopra la barretta */
+.fx-shortcuts {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  max-height: 48vh;
+  overflow-y: auto;
+  padding: var(--space-4) var(--space-5) var(--space-5);
+  border-top: 1px solid var(--line-strong);
+  background: var(--chrome);
+  box-shadow: var(--shadow-strong);
+  animation: fx-shortcuts-in 160ms ease-out;
+}
+
+@keyframes fx-shortcuts-in {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-shortcuts {
+    animation: none;
+  }
+}
+
+.fx-shortcuts__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.fx-shortcuts__head .icon-btn {
+  margin-left: auto;
+  align-self: center;
+}
+
+.fx-shortcuts__title {
+  margin: 0;
+  font-size: var(--fs-ui);
+  font-weight: 600;
+}
+
+.fx-shortcuts__groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-4) var(--space-6);
+}
+
+.fx-shortcuts__group h3 {
+  margin: 0 0 var(--space-2);
+  color: var(--muted);
+  font-size: var(--fs-ui-small);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.fx-shortcuts__group dl {
+  margin: 0;
+}
+
+.fx-shortcuts__row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: 3px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.fx-shortcuts__row dd {
+  margin: 0;
+  white-space: nowrap;
+}

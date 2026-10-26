@@ -17,6 +17,7 @@ import { Dialogs, Toasts } from './Dialogs';
 import { Splash, Onboarding, Landing } from './Welcome';
 import { ContextMenuHost } from '../components/ContextMenu';
 import { AskHost } from '../components/confirm';
+import { ShortcutsSheet } from './ShortcutsSheet';
 import { handleGlobalKey } from './commands';
 import { getEditor } from './editor/editorRef';
 import { liveMarkdown } from './editor/Scriptorium';
@@ -101,6 +102,7 @@ export default function App() {
       <Toasts />
       <ContextMenuHost />
       <AskHost />
+      <ShortcutsSheet />
     </>
   );
 

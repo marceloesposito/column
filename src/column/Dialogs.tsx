@@ -1,11 +1,9 @@
-// Finestre del menu dell'app: Preferenze, Aiuto (scorciatoie), Informazioni. E gli avvisi.
+// Finestre del menu dell'app: Preferenze, Informazioni. E gli avvisi.
 import { X } from 'lucide-react';
 import { Modal } from '../components/Modal';
 import { SaveAsDialog } from './SaveAs';
 import { useUi } from './ui';
 import { useColumn } from './store';
-import { COMMANDS } from './commandSpecs';
-import { shortcutLabel } from './keys';
 import { t, useLang } from '../i18n';
 import pkg from '../../package.json';
 
@@ -41,33 +39,6 @@ function Prefs() {
   );
 }
 
-function Help() {
-  const keys = COMMANDS.filter((c) => c.shortcut);
-  return (
-    <div className="fx-help">
-      <p>{t('help.intro')}</p>
-      <table className="fx-keys">
-        <tbody>
-          {keys.map((c) => (
-            <tr key={c.id}>
-              <td>{t(c.label)}</td>
-              <td>
-                <kbd>{shortcutLabel(c.shortcut!)}</kbd>
-              </td>
-            </tr>
-          ))}
-          <tr>
-            <td>{t('help.slash')}</td>
-            <td>
-              <kbd>/</kbd>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
 function About() {
   return (
     <div className="fx-about">
@@ -85,10 +56,10 @@ export function Dialogs() {
   if (!d) return null;
   if (d === 'saveAs') return <SaveAsDialog />;
   const close = () => useUi.getState().setDialog(null);
-  const title = { prefs: t('cmd.app.prefs'), help: t('cmd.app.help'), about: t('cmd.app.about') }[d];
+  const title = { prefs: t('cmd.app.prefs'), about: t('cmd.app.about') }[d];
   return (
     <Modal title={title} onClose={close} size="small">
-      {d === 'prefs' ? <Prefs /> : d === 'help' ? <Help /> : <About />}
+      {d === 'prefs' ? <Prefs /> : <About />}
     </Modal>
   );
 }
