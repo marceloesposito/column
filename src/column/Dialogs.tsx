@@ -1,6 +1,7 @@
 // Finestre del menu dell'app: Preferenze, Aiuto (scorciatoie), Informazioni. E gli avvisi.
 import { X } from 'lucide-react';
 import { Modal } from '../components/Modal';
+import { SaveAsDialog } from './SaveAs';
 import { useUi } from './ui';
 import { useColumn } from './store';
 import { COMMANDS } from './commandSpecs';
@@ -82,6 +83,7 @@ export function Dialogs() {
   useLang();
   const d = useUi((s) => s.dialog);
   if (!d) return null;
+  if (d === 'saveAs') return <SaveAsDialog />;
   const close = () => useUi.getState().setDialog(null);
   const title = { prefs: t('cmd.app.prefs'), help: t('cmd.app.help'), about: t('cmd.app.about') }[d];
   return (

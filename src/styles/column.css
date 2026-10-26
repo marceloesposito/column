@@ -271,6 +271,64 @@ select.fx-input {
   gap: var(--space-4);
 }
 
+/* Salva come: i formati come righe da scegliere, l'avviso sotto */
+.fx-formats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.fx-format {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-small);
+  cursor: pointer;
+}
+
+.fx-format:hover {
+  background: var(--chrome);
+}
+
+.fx-format.is-on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.fx-format input {
+  margin-top: 3px;
+  accent-color: var(--accent);
+}
+
+.fx-format__text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.fx-format__name {
+  font-weight: 600;
+}
+
+.fx-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid color-mix(in srgb, var(--warn) 45%, transparent);
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--warn) 10%, var(--paper));
+  color: var(--ink);
+}
+
+.fx-alert > svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--warn);
+}
+
 /* ---------------------------------------------------------------- barra in alto */
 /* senza bordi, sullo stesso fondo del testo: il nome del foglio e, se agganciata, la barretta */
 .fx-header {

@@ -59,11 +59,11 @@ export const COMMANDS: CommandSpec[] = [
   { id: 'timer.toggle', label: 'cmd.timer.toggle', home: 'bar', shortcut: 'Mod+Alt+T' },
   { id: 'counts.open', label: 'cmd.counts.open', home: 'bar', palette: false },
   { id: 'export.menu', label: 'cmd.export.menu', home: 'bar', palette: false },
-  // nel menu dell'export (L1)
-  { id: 'sheet.exportDocx', label: 'cmd.sheet.exportDocx', home: 'bar' },
-  { id: 'sheet.exportMd', label: 'cmd.sheet.exportMd', home: 'bar' },
-  { id: 'sheet.exportPdf', label: 'cmd.sheet.exportPdf', home: 'bar', shortcut: 'Mod+P' },
+  // nel menu dell'export (L1); Word, Markdown e PDF stanno nella finestra di Salva come
   { id: 'sheet.saveAs', label: 'cmd.sheet.saveAs', home: 'bar', shortcut: 'Mod+Shift+S' },
+  { id: 'sheet.exportDocx', label: 'cmd.sheet.exportDocx', home: 'none' },
+  { id: 'sheet.exportMd', label: 'cmd.sheet.exportMd', home: 'none' },
+  { id: 'sheet.exportPdf', label: 'cmd.sheet.exportPdf', home: 'none', shortcut: 'Mod+P' },
   { id: 'sheet.toCompendium', label: 'cmd.sheet.toCompendium', home: 'bar' },
 
   // barretta della Tabula
@@ -114,7 +114,7 @@ export const COMMANDS: CommandSpec[] = [
 export const L0: Record<'header' | 'edgeTab' | 'bar' | 'tabulaBar' | 'versionsBar', string[][]> = {
   header: [['sheet.rename']],
   edgeTab: [['tabula.toggle'], ['versions.toggle']],
-  bar: [['text.style'], ['text.bold', 'text.italic', 'text.underline', 'text.strike', 'text.align'], ['text.color'], ['text.insert'], ['timer.toggle'], ['counts.open'], ['export.menu', 'sheet.exportDocx', 'sheet.exportMd', 'sheet.exportPdf', 'sheet.saveAs', 'sheet.toCompendium']],
+  bar: [['text.style'], ['text.bold', 'text.italic', 'text.underline', 'text.strike', 'text.align'], ['text.color'], ['text.insert'], ['timer.toggle'], ['counts.open'], ['export.menu', 'sheet.saveAs', 'sheet.toCompendium']],
   tabulaBar: [['tabula.add'], ['tabula.find'], ['tabula.zoomOut', 'tabula.zoomIn', 'tabula.fit']],
   versionsBar: [['version.save'], ['version.resume']],
 };
