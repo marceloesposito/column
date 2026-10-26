@@ -1,11 +1,12 @@
 // Armarium del foglio: la Tabula "gravitazionale". I blocchi trovano da soli il loro posto in un
 // flusso dall'alto in basso (flowLayout) e ci arrivano con una fisica morbida (gravity); trascinati,
 // gli altri si scansano; lasciati poco sotto un altro blocco ci si attaccano, come in Scratch.
+// Incollando (Cmd/Ctrl+V) o trascinando dentro testo, link e immagini nascono blocchi (intake.ts).
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ReactFlow, ReactFlowProvider, Handle, Position, Background, BackgroundVariant, useReactFlow, type Node, type Edge, type NodeChange, type NodeProps, type Connection } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import { create } from 'zustand';
-import { GripVertical, Image as ImageIcon, Link2, StickyNote, Quote, ExternalLink, Plus, Search, Minus, Maximize2, ChevronDown } from 'lucide-react';
+import { GripVertical, Image as ImageIcon, Link2, StickyNote, Quote, ExternalLink, Plus, Search, Minus, Maximize2, ChevronDown, Play, Music, MessageSquare, MapPin, FileText, Code2, BookOpen } from 'lucide-react';
 import { useColumn, mediaUrl } from '../store';
 import { useUi } from '../ui';
 import { attach, detach, newId, parentOf, removeBlocks, BLOCK_W, type Block, type BlockKind, type Tabula } from './model';
@@ -22,6 +23,9 @@ import { platform } from '../../platform';
 import type { Simulation } from 'd3-force';
 import { t, tn, useLang } from '../../i18n';
 import { KnifeLayer } from './KnifeLayer';
+import { intake } from './intake';
+import { clock, embedOf, siteOf, type EmbedKind } from './embed';
+import { matches, shortcutLabel } from '../keys';
 
 type BlockData = { block: Block; lit: boolean; found: boolean };
 
@@ -53,6 +57,52 @@ async function editLinkBlock(b: Block) {
 }
 
 const ICON: Record<BlockKind, typeof StickyNote> = { note: StickyNote, excerpt: Quote, image: ImageIcon, link: Link2 };
+const EMBED_ICON: Record<EmbedKind, typeof StickyNote> = { video: Play, audio: Music, post: MessageSquare, map: MapPin, doc: FileText, code: Code2, wiki: BookOpen };
+
+/** Un link; se il servizio e' riconosciuto, una scheda embed fatta in casa (nessuna rete). */
+function LinkCard({ b }: { b: Block }) {
+  const url = b.url ?? '';
+  const em = embedOf(url);
+  const open = () => url && void platform.openExternal(url);
+  const title = b.text || em?.label || (em ? t(`tabula.embed.${em.kind}`) : siteOf(url));
+  if (!em)
+    return (
+      <div className="fx-block-node__link">
+        <strong>{title}</strong>
+        <button className="fx-icon nodrag" title={t('tabula.openLink')} aria-label={t('tabula.openLink')} onClick={open}>
+          <ExternalLink size={13} />
+        </button>
+        <span className="fx-muted">{url}</span>
+      </div>
+    );
+  const Icon = EMBED_ICON[em.kind];
+  return (
+    <div className={`fx-embed fx-embed--${em.kind}`}>
+      {em.kind === 'video' ? (
+        <div className="fx-embed__screen">
+          <button className="fx-embed__play nodrag" title={t('tabula.embed.play')} aria-label={t('tabula.embed.play')} onClick={open}>
+            <Play size={20} />
+          </button>
+          {em.start ? <span className="fx-embed__time fx-mono">{t('tabula.embed.from', { time: clock(em.start) })}</span> : null}
+        </div>
+      ) : null}
+      <div className="fx-embed__row">
+        {em.kind !== 'video' && (
+          <span className="fx-embed__badge">
+            <Icon size={16} />
+          </span>
+        )}
+        <div className="fx-embed__text">
+          <strong>{title}</strong>
+          <span className="fx-muted">{siteOf(url)}</span>
+        </div>
+        <button className="fx-icon nodrag" title={t('tabula.openLink')} aria-label={t('tabula.openLink')} onClick={open}>
+          <ExternalLink size={13} />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 function BlockNode({ data, selected }: NodeProps<Node<BlockData>>) {
   const b = data.block;
@@ -72,6 +122,7 @@ function BlockNode({ data, selected }: NodeProps<Node<BlockData>>) {
     return () => cancelAnimationFrame(raf);
   }, [editing]);
   const Icon = ICON[b.kind];
+  const embed = b.kind === 'link' && b.url ? embedOf(b.url) : null;
   const onDouble = () => {
     if (b.kind === 'note') useEditing.setState({ id: b.id });
     else if (b.kind === 'excerpt' && b.anchor) {
@@ -85,7 +136,7 @@ function BlockNode({ data, selected }: NodeProps<Node<BlockData>>) {
       <Handle type="target" position={Position.Top} className="fx-handle" />
       <div className="fx-block-node__head">
         <Icon size={13} />
-        <span className="fx-block-node__kind">{t(`tabula.kind.${b.kind}`)}</span>
+        <span className="fx-block-node__kind">{embed?.provider ?? t(`tabula.kind.${b.kind}`)}</span>
         <span
           className="fx-block-node__grip nodrag"
           draggable
@@ -101,13 +152,7 @@ function BlockNode({ data, selected }: NodeProps<Node<BlockData>>) {
       </div>
       {b.kind === 'image' && b.src && <img className="fx-block-node__img" src={mediaUrl(b.src)} alt={b.text} draggable={false} />}
       {b.kind === 'link' ? (
-        <div className="fx-block-node__link">
-          <strong>{b.text || b.url}</strong>
-          <button className="fx-icon nodrag" title={t('tabula.openLink')} aria-label={t('tabula.openLink')} onClick={() => b.url && void platform.openExternal(b.url)}>
-            <ExternalLink size={13} />
-          </button>
-          <span className="fx-muted">{b.url}</span>
-        </div>
+        <LinkCard b={b} />
       ) : b.kind === 'excerpt' ? (
         <blockquote className="fx-block-node__quote">{b.anchor?.quote ?? b.text}</blockquote>
       ) : (
@@ -358,8 +403,36 @@ function Board({ narrow }: { narrow: boolean }) {
     const bottom = Math.max(0, ...cur.blocks.map((b) => (pos[b.id]?.y ?? b.y) + b.h));
     const b: Block = { id: newId('b'), kind, text: '', x: 0, y: bottom + 40, w: BLOCK_W, h: kind === 'image' ? 180 : 90, ...patch };
     setTabula({ ...cur, blocks: [...cur.blocks, b] });
-    if (kind === 'note') useEditing.setState({ id: b.id });
+    if (kind === 'note' && !b.text) useEditing.setState({ id: b.id });
     return b;
+  };
+
+  /** Ultimo punto del mouse sui Clips: li' nascono i blocchi incollati. */
+  const pointer = useRef<{ x: number; y: number } | null>(null);
+  /** Campo invisibile che riceve Cmd/Ctrl+V: WebKit non incolla in un elemento non modificabile. */
+  const catcher = useRef<HTMLTextAreaElement>(null);
+
+  /** Testo, link, immagini e file di testo incollati o trascinati dentro diventano blocchi. */
+  const takeIn = (dt: DataTransfer, client: { x: number; y: number } | null) => {
+    const files = [...dt.files];
+    const items = intake({ text: dt.getData('text/plain'), uriList: dt.getData('text/uri-list'), html: dt.getData('text/html'), files: files.map((f) => ({ name: f.name, type: f.type })) });
+    if (!items.length) {
+      if (files.length) useColumn.getState().toast(t('tabula.pasteNothing'), 'info');
+      return;
+    }
+    const at = client ? flow.screenToFlowPosition(client) : null;
+    // piu' blocchi insieme scendono uno sotto l'altro: il flusso li tiene in quest'ordine
+    const place = (i: number) => (at ? { x: at.x, y: at.y + i * 30 } : {});
+    void (async () => {
+      for (const [i, it] of items.entries()) {
+        if (it.kind === 'image') addBlock('image', { src: useColumn.getState().addMedia(files[it.file].name || 'image.png', new Uint8Array(await files[it.file].arrayBuffer())), ...place(i) });
+        else if (it.kind === 'textFile') {
+          const text = (await files[it.file].text()).replace(/\r\n?/g, '\n').trim();
+          if (text) addBlock('note', { text, ...place(i) });
+        } else if (it.kind === 'link') addBlock('link', { url: it.url, text: it.title, ...place(i) });
+        else addBlock('note', { text: it.text, ...place(i) });
+      }
+    })();
   };
 
   const addImage = async () => {
@@ -401,8 +474,25 @@ function Board({ narrow }: { narrow: boolean }) {
     <div
       className="fx-tabula"
       ref={wrap}
+      // focalizzabile: dopo un clic sui Clips Cmd/Ctrl+V arriva qui
+      tabIndex={-1}
+      onPointerMove={(e) => (pointer.current = { x: e.clientX, y: e.clientY })}
+      onPointerLeave={() => (pointer.current = null)}
+      onKeyDown={(e) => {
+        const el = e.target as HTMLElement;
+        if (matches(e.nativeEvent, 'Mod+V') && !el.closest('input, textarea, [contenteditable="true"]')) catcher.current?.focus({ preventScroll: true });
+      }}
+      onPaste={(e) => {
+        const el = e.target as HTMLElement;
+        if (el !== catcher.current && el.closest('input, textarea, [contenteditable="true"]')) return;
+        e.preventDefault();
+        if (el === catcher.current) wrap.current?.focus({ preventScroll: true });
+        takeIn(e.clipboardData, pointer.current);
+      }}
       onDragOver={(e) => {
-        if (e.dataTransfer.types.includes(EXCERPT_MIME) || e.dataTransfer.types.includes('Files')) {
+        const types = e.dataTransfer.types;
+        if (types.includes(BLOCK_MIME)) return;
+        if (types.includes(EXCERPT_MIME) || types.includes('Files') || types.includes('text/plain') || types.includes('text/uri-list') || types.includes('text/html')) {
           e.preventDefault();
           e.dataTransfer.dropEffect = 'copy';
         }
@@ -416,12 +506,9 @@ function Board({ narrow }: { narrow: boolean }) {
           addBlock('excerpt', { text: ex.text, anchor: ex.anchor, x: at.x, y: at.y });
           return;
         }
-        const files = [...e.dataTransfer.files].filter((f) => f.type.startsWith('image/'));
-        if (!files.length) return;
+        if (e.dataTransfer.types.includes(BLOCK_MIME)) return;
         e.preventDefault();
-        void (async () => {
-          for (const f of files) addBlock('image', { src: useColumn.getState().addMedia(f.name, new Uint8Array(await f.arrayBuffer())), x: at.x, y: at.y });
-        })();
+        takeIn(e.dataTransfer, { x: e.clientX, y: e.clientY });
       }}
     >
       <ReactFlow
@@ -453,6 +540,7 @@ function Board({ narrow }: { narrow: boolean }) {
       >
         <Background variant={BackgroundVariant.Dots} gap={22} size={1.1} />
       </ReactFlow>
+      <textarea ref={catcher} className="fx-tabula__catch" tabIndex={-1} aria-hidden="true" onKeyUp={() => wrap.current?.focus({ preventScroll: true })} />
       <KnifeLayer
         container={wrap}
         label={t('clips.knife')}
@@ -461,7 +549,7 @@ function Board({ narrow }: { narrow: boolean }) {
           useColumn.getState().toast(tn('clips.knifeCut', ids.length), 'info');
         }}
       />
-      {!blocks.length && <div className="fx-tabula__empty">{t('tabula.empty')}</div>}
+      {!blocks.length && <div className="fx-tabula__empty">{t('tabula.empty', { keys: shortcutLabel('Mod+V') })}</div>}
       <FloatingBar label={t('bar.tabula')}>
         <CmdButton id="tabula.add" ref={addRef} className="fx-btn--text" pressed={popover === 'tabulaAdd'}>
           <Plus size={15} />
@@ -496,6 +584,7 @@ function Board({ narrow }: { narrow: boolean }) {
             <Link2 size={15} /> <span>{t('tabula.kind.link')}</span>
           </button>
           <div className="fx-menu__hint">{t('tabula.excerptHint')}</div>
+          <div className="fx-menu__hint">{t('tabula.pasteHint', { keys: shortcutLabel('Mod+V') })}</div>
         </div>
       </Popover>
       <Popover anchor={findRef.current} open={popover === 'tabulaFind'} onClose={close} placement="above">
