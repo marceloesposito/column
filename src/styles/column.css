@@ -2407,9 +2407,28 @@ select.fx-input {
 }
 
 /* ---------------------------------------------------------------- foglio delle scorciatoie */
-/* il "?" in alto a destra */
+/* il "?" in un cerchietto: accanto al nome (Windows e Linux) o nell'angolo in alto a destra (Mac) */
 .fx-help-btn {
+  flex: none;
+  width: 20px;
+  min-width: 20px;
+  height: 20px;
+  margin-left: var(--space-2);
+  padding: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: 50%;
   color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.fx-btn.fx-help-btn.is-active {
+  border-color: var(--accent);
+}
+
+.fx-help-btn--corner {
+  margin-right: var(--space-1);
 }
 
 /* sale dal fondo della finestra, a tutta larghezza, sopra la barretta */

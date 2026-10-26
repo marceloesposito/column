@@ -1,8 +1,8 @@
 // Barra in alto: il nome del foglio a sinistra (un clic per cambiarlo), al centro il posto per la
-// barretta quando la si aggancia, a destra il "?" delle scorciatoie e (Windows e Linux) riduci e chiudi. Sullo stesso fondo del
+// barretta quando la si aggancia, a destra (Windows e Linux) riduci e chiudi. Il "?" delle scorciatoie,
+// in un cerchietto, sta nell'angolo in alto a destra sul Mac e accanto al nome altrove. Sullo stesso fondo del
 // testo, fa anche da barra del titolo. Tabula e Palimpsestus stanno sui bordi; il resto per nome (⌘K).
 import { useEffect, useRef, useState } from 'react';
-import { CircleHelp } from 'lucide-react';
 import { useColumn, sheetTitle } from './store';
 import { WindowControls, customTitleBar } from './WindowControls';
 import { isMac } from './keys';
@@ -66,12 +66,12 @@ function Unsaved() {
   ) : null;
 }
 
-/** "?": apre e chiude il foglio delle scorciatoie in basso. */
+/** "?" in un cerchietto: apre e chiude il foglio delle scorciatoie in basso. */
 function HelpButton() {
   const on = useUi((s) => s.shortcuts);
   return (
-    <CmdButton id="app.help" className="fx-help-btn" pressed={on}>
-      <CircleHelp size={16} />
+    <CmdButton id="app.help" className={`fx-help-btn ${isMac ? 'fx-help-btn--corner' : ''}`} pressed={on}>
+      ?
     </CmdButton>
   );
 }
@@ -85,10 +85,11 @@ export function Header({ bare = false }: { bare?: boolean }) {
       <div className="fx-header__left" data-tauri-drag-region>
         {!bare && <SheetName />}
         {!bare && <Unsaved />}
+        {!bare && !isMac && <HelpButton />}
       </div>
       {/* centrato sulla finestra intera, non sullo spazio rimasto */}
       <div id="fx-dock" className="fx-header__center" data-tauri-drag-region />
-      {!bare && <HelpButton />}
+      {!bare && isMac && <HelpButton />}
       {customTitleBar && <WindowControls />}
     </header>
   );
