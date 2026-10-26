@@ -56,8 +56,11 @@ interface ColumnState {
   adopt(s: Sheet, path?: string | null): Promise<void>;
   /** Salva: nel suo file o, la prima volta, dove sceglie l'utente. false se ha annullato */
   save(): Promise<boolean>;
-  /** Salva come: un file nuovo, che da quel momento e' il file del pezzo */
-  saveAs(): Promise<boolean>;
+  /**
+   * Salva come: un file nuovo, che da quel momento e' il file del pezzo. Con `copy` scrive solo una
+   * copia e il pezzo resta dov'era.
+   */
+  saveAs(opts?: { copy?: boolean }): Promise<boolean>;
   patchSheet(p: Partial<Sheet>): void;
   setMarkdown(md: string): void;
   setComments(c: CommentsFile): void;
@@ -244,7 +247,7 @@ export const useColumn = create<ColumnState>((set, get) => {
       return get().saveState === 'saved';
     },
 
-    async saveAs() {
+    async saveAs(opts = {}) {
       const s = get().sheet;
       if (!s) return false;
       const name = s.meta.name || sheetTitle(s);
@@ -257,6 +260,10 @@ export const useColumn = create<ColumnState>((set, get) => {
       } catch (e) {
         get().toast(t('saveAs.error', { error: e instanceof Error ? e.message : String(e) }), 'error');
         return false;
+      }
+      if (opts.copy) {
+        get().toast(t('saveAs.copyDone', { name: path.slice(path.lastIndexOf('/') + 1) }), 'ok');
+        return true;
       }
       if (saveTimer) clearTimeout(saveTimer);
       saveTimer = null;

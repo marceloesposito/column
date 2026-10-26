@@ -33,9 +33,9 @@ export async function save() {
   await useColumn.getState().save();
 }
 
-export async function saveAs() {
+export async function saveAs(opts: { copy?: boolean } = {}) {
   syncText();
-  await useColumn.getState().saveAs();
+  await useColumn.getState().saveAs(opts);
 }
 
 /** Toglie il pezzo dall'elenco dei recenti; il file resta dov'e'. */
