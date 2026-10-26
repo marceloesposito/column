@@ -1,21 +1,16 @@
 ---
 name: insidie-del-codice
-description: Insidie gia' incontrate in parti specifiche di Alexandria - versioni git e guard(), associazioni di file dell'installer, nomi di file che differiscono solo per le maiuscole su macOS, import .docx con mammoth, aggiornare il nucleo logos, citazioni nelle note. Da leggere prima di toccare versions/, tauri.conf.json, doc/import/, citazioni/export, o la dipendenza logos.
+description: Insidie gia' incontrate in parti specifiche di Column - salvataggio dei pezzi, nomi di file che differiscono solo per le maiuscole su macOS, import .docx con mammoth, aggiornare il nucleo logos. Da leggere prima di toccare sheets.ts/store.ts, importDoc, o la dipendenza logos.
 ---
 
 # Insidie di singole parti del codice
 
-- **Versioni git, `guard()` in `versions/actions.ts`**: i comandi git senza risultato tornano `null`,
-  che `guard` usava per l'errore. Per i comandi "void" restituire `true`
-  (`async () => (await f(), true)`).
-- **Associazioni di file**: su Windows l'installer NSIS diventa il programma predefinito dei formati
-  dichiarati. Le associazioni ai documenti (.docx...) stanno solo in `tauri.macos.conf.json` (rango
-  Alternate); in `tauri.conf.json` resta solo `.recensio`.
-- **macOS non distingue le maiuscole nei nomi di file**: `leftSections.ts` e `LeftSections.tsx` nella
-  stessa cartella rompono tsc. Nomi diversi, non solo per maiuscole.
+- **Salvataggio dei pezzi** (`sheets.ts`): le scritture passano in coda una alla volta e scrivono
+  direttamente il `.clmn` (l'atomicita' la fa `write_atomic` nel Rust). Un temporaneo gestito anche
+  dal JS faceva fallire due salvataggi insieme con "No such file or directory".
+- **macOS non distingue le maiuscole nei nomi di file**: due file che differiscono solo per le
+  maiuscole nella stessa cartella rompono tsc. Nomi diversi, non solo per maiuscole.
 - **mammoth**: la versione per node (test) vuole `buffer`, quella per il browser `arrayBuffer`; si
   passano entrambi. Nei test jsdom `import.meta.url` non e' un file: usare `__dirname`.
 - **`logos`**: aspettare la CI della PR anche per un commit che cambia solo la versione, poi merge e
   tag; qui `npm install logos@github:marceloesposito/logos#vX.Y.Z`.
-- **Note dentro le note**: le citazioni in una nota passano `inNote` a `ctx.cite` (fonte per esteso,
-  mai `#footnote` annidato).

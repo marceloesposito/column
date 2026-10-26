@@ -1,3 +1,6 @@
+> Dal 26/10/2026 Column vive nella repo `marceloesposito/column`; i riferimenti al "ramo `column`"
+> qui sotto sono di quando stava dentro alexandria.
+
 # Post-it della Tabula + Column, l'app sorella in mobilita'
 
 > Fino al 18/10/2026 l'app si chiamava **Folium** (ramo `folium`, file `.folium`): il piano qui sotto
