@@ -552,3 +552,18 @@ cache della webview).
   `stato.json`, `recent`); "Togli dall'elenco" non cancella il file. Un `.clmn` aperto da fuori si
   salva nel suo file; un .docx, .md, .txt o un vecchio `.folium` diventa un pezzo da salvare. I pezzi
   gia' presenti in `fogli/` restano li' (non elencati) e si possono recuperare a mano.
+
+### Clips: incolla, trascina ed embed (26/10/2026)
+
+- **Cmd/Ctrl+V e trascinamento nei Clips** creano blocchi da soli (`tabula/intake.ts`, puro e
+  testato): immagini (file o screenshot) -> blocchi immagine in `media/`, `.txt`/`.md` -> note,
+  indirizzi (uno per riga, anche `text/uri-list`) -> link, una parola con link copiata da una pagina
+  -> link col suo titolo, il resto del testo -> una nota. Incollando, il blocco nasce dove sta il
+  mouse. WebKit non incolla in un elemento non modificabile: a Cmd/Ctrl+V il fuoco passa per un attimo
+  a un campo invisibile (`.fx-tabula__catch`) e torna ai Clips.
+- **Embed senza rete** (`tabula/embed.ts`): dall'indirizzo si riconosce il servizio (YouTube, Vimeo,
+  Spotify, SoundCloud, X, Bluesky, Instagram, Wikipedia, GitHub, mappe, PDF...) e il link diventa una
+  scheda fatta in casa (schermo 16:9 con "da 1:23" per i video, icona, titolo ricavato dall'indirizzo,
+  dominio). Niente iframe ne' anteprime scaricate: violerebbero l'offline totale, la CSP e "nessun
+  servizio americano"; il contenuto si apre nel browser. Nessuna dipendenza nuova, il formato dei
+  Clips non cambia (resta un blocco `link`).

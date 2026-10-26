@@ -2200,6 +2200,98 @@ select.fx-input {
   white-space: nowrap;
 }
 
+/* i Clips prendono il fuoco per Cmd/Ctrl+V senza mostrare un bordo */
+.fx-tabula:focus {
+  outline: none;
+}
+
+.fx-tabula__catch {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  border: 0;
+  opacity: 0;
+  pointer-events: none;
+  resize: none;
+}
+
+/* embed fatti in casa: nessuna anteprima scaricata, solo servizio, titolo e dominio */
+.fx-embed {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.fx-embed__screen {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-small);
+  background: var(--accent-soft);
+}
+
+.fx-embed__play {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0 0 0 3px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.fx-embed__play:hover {
+  transform: scale(1.08);
+}
+
+.fx-embed__time {
+  position: absolute;
+  right: var(--space-2);
+  bottom: var(--space-1);
+  color: var(--ink-2);
+  font-size: var(--fs-ui-small);
+}
+
+.fx-embed__row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.fx-embed__badge {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-small);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.fx-embed__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.fx-embed__text strong,
+.fx-embed__text .fx-muted {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fx-handle.react-flow__handle {
   width: 10px;
   height: 10px;
