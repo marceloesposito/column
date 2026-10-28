@@ -49,6 +49,7 @@ export function Scriptorium() {
   const sheet = useColumn((s) => s.sheet);
   const loadTick = useColumn((s) => s.loadTick);
   const zoom = useColumn((s) => s.app.zoom);
+  const showPages = useColumn((s) => s.app.counts.includes('pages'));
   const font = sheet?.meta.font ?? 'serif';
   const focus = useColumn((s) => s.app.focus);
   // si scrive: gli altri paragrafi si attenuano finche' non si muove il mouse
@@ -176,7 +177,7 @@ export function Scriptorium() {
   }, [editor]);
 
   return (
-    <div className={`fx-scriptorium fx-font--${font} ${focus ? 'is-focus' : ''} ${writing ? 'is-writing' : ''}`} style={{ '--zoom': zoom } as React.CSSProperties}>
+    <div className={`fx-scriptorium fx-font--${font} ${focus ? 'is-focus' : ''} ${writing ? 'is-writing' : ''} ${showPages ? 'has-page-hints' : ''}`} style={{ '--zoom': zoom } as React.CSSProperties}>
       <div className="fx-scroll">
         <div className="fx-page">
           {editor && (

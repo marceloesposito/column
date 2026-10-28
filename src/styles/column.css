@@ -1182,8 +1182,13 @@ select.fx-input {
   pointer-events: none;
 }
 
-/* confine di pagina nel testo senza bordi: una linea tenue, che non sposta nulla; `--hint-y` (dal
+/* confine di pagina nel testo senza bordi: si vede solo se "Pagine" e' fra i conteggi del contatore.
+   Una linea tenue, che non sposta nulla; `--hint-y` (dal
    plugin) la mette a meta' fra i due blocchi, il numero della pagina nuova sta a sinistra nel margine */
+.fx-scriptorium:not(.has-page-hints) .fx-page-hint {
+  display: none;
+}
+
 .fx-prose > .fx-page-hint {
   position: relative;
   height: 0;
