@@ -14,9 +14,10 @@ import { markdownToDoc } from '../doc';
 import { FloatingBar, CmdButton } from '../FloatingBar';
 import { t, useLang } from '../../i18n';
 
-const ROW = 46;
-const LANE = 34;
-const PAD = 28;
+const ROW = 36;
+const LANE = 24;
+const PAD = 16;
+const PREVIEW_W = 300;
 
 function when(at: number): string {
   return new Date(at).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
@@ -75,7 +76,7 @@ export function VersionsView() {
   if (!s) return null;
   const { slots, lanes } = treeLayout(s.tree);
   const byId = new Map(slots.map((sl) => [sl.id, sl]));
-  const width = PAD * 2 + Math.max(1, lanes) * LANE + 280;
+  const width = PAD * 2 + Math.max(1, lanes) * LANE + 150;
   const height = PAD * 2 + slots.length * ROW;
   const xy = (id: string) => {
     const sl = byId.get(id)!;
@@ -86,7 +87,8 @@ export function VersionsView() {
   const enter = (id: string, e: React.MouseEvent) => {
     if (timer.current) clearTimeout(timer.current);
     const r = box.current?.getBoundingClientRect();
-    const x = e.clientX - (r?.left ?? 0) + 24;
+    // anteprima stretta come il pannello: non esce dal suo bordo destro
+    const x = Math.max(4, Math.min(e.clientX - (r?.left ?? 0) + 16, (r?.width ?? PREVIEW_W) - PREVIEW_W - 4));
     const y = e.clientY - (r?.top ?? 0) - 20 + (box.current?.scrollTop ?? 0);
     timer.current = setTimeout(() => setHover({ id, x, y }), 150);
   };

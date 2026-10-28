@@ -117,7 +117,7 @@ export interface PanelWin {
 export type PanelId = 'tabula' | 'versions';
 
 /** Posto di partenza: la Tabula a sinistra, il Palimpsestus a destra, quasi tutta l'altezza. */
-const START: Record<PanelId, Frame> = { tabula: { ...DEFAULT_FRAME, x: 0.04 }, versions: { ...DEFAULT_FRAME, x: 0.54 } };
+const START: Record<PanelId, Frame> = { tabula: { ...DEFAULT_FRAME, x: 0.04 }, versions: { ...DEFAULT_FRAME, x: 0.75, w: 0.23 } };
 
 const ZONES: SnapZone[] = ['left', 'right', 'top', 'top-left', 'top-right', 'bottom-left', 'bottom-right'];
 

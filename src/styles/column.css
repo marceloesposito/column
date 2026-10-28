@@ -2313,12 +2313,11 @@ select.fx-input {
   position: relative;
   overflow: auto;
   background: var(--chrome);
-  padding: var(--space-4) var(--space-6) 96px;
+  padding: var(--space-3) var(--space-3) 80px;
 }
 
 .fx-tree {
   display: block;
-  margin: 0 auto;
 }
 
 .fx-tree__edge {
@@ -2345,7 +2344,7 @@ select.fx-input {
 
 .fx-tree__label {
   fill: var(--ink-2);
-  font-size: var(--fs-ui);
+  font-size: 12px;
 }
 
 .fx-tree__node.is-named .fx-tree__label,
@@ -2362,8 +2361,8 @@ select.fx-input {
 .fx-vpreview {
   position: absolute;
   z-index: 40;
-  width: 380px;
-  max-height: 320px;
+  width: 300px;
+  max-height: 280px;
   overflow: hidden;
   pointer-events: none;
   background: color-mix(in srgb, var(--paper) 85%, transparent);
