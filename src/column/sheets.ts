@@ -119,13 +119,18 @@ export type PanelId = 'tabula' | 'versions';
 /** Posto di partenza: la Tabula a sinistra, il Palimpsestus a destra, quasi tutta l'altezza. */
 const START: Record<PanelId, Frame> = { tabula: { ...DEFAULT_FRAME, x: 0.04 }, versions: { ...DEFAULT_FRAME, x: 0.75, w: 0.23 } };
 
+/** Posto di partenza di prima del 28/10/2026 (Editions larghe 42%): chi non l'ha mai mosso passa al nuovo. */
+const OLD_VERSIONS_START: Frame = { ...DEFAULT_FRAME, x: 0.54 };
+const isOldStart = (f: Frame) => (Object.keys(OLD_VERSIONS_START) as (keyof Frame)[]).every((k) => Math.abs(f[k] - OLD_VERSIONS_START[k]) < 1e-6);
+
 const ZONES: SnapZone[] = ['left', 'right', 'top', 'top-left', 'top-right', 'bottom-left', 'bottom-right'];
 
 function normalizePanel(raw: unknown, id: PanelId): PanelWin {
   const r = (raw && typeof raw === 'object' ? raw : {}) as Partial<PanelWin>;
   const frame = (f: unknown): Frame => {
     const x = f as Partial<Frame> | null;
-    return x && [x.x, x.y, x.w, x.h].every((v) => typeof v === 'number' && Number.isFinite(v)) ? clampFrame(x as Frame) : START[id];
+    if (!x || ![x.x, x.y, x.w, x.h].every((v) => typeof v === 'number' && Number.isFinite(v))) return START[id];
+    return id === 'versions' && isOldStart(x as Frame) ? START[id] : clampFrame(x as Frame);
   };
   return { open: r.open === true, frame: frame(r.frame), free: frame(r.free ?? r.frame), snap: ZONES.includes(r.snap as SnapZone) ? (r.snap as SnapZone) : null };
 }

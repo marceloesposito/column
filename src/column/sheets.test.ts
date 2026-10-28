@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { platform } from '../platform';
 import { newSheet } from './format';
-import { MAX_RECENT, readSheetFile, withRecent, writeSheetFile, type SheetEntry } from './sheets';
+import { MAX_RECENT, defaultAppState, loadAppState, readSheetFile, saveAppState, withRecent, writeSheetFile, type SheetEntry } from './sheets';
 
 const e = (id: string): SheetEntry => ({ id, name: id, updated: '', preview: '' });
 
@@ -36,5 +36,17 @@ describe('salvataggio del pezzo', () => {
     spy.mockRestore();
     expect(most).toBe(1);
     expect((await readSheetFile(path)).markdown).toBe('dopo');
+  });
+});
+
+describe('posto delle Editions salvato', () => {
+  it('il vecchio posto di partenza (larghe 42%) passa al nuovo, uno spostato a mano resta', async () => {
+    const d = defaultAppState();
+    const vecchio = { x: 0.54, y: 0.02, w: 0.42, h: 0.96 };
+    await saveAppState({ ...d, versions: { ...d.versions, frame: vecchio, free: vecchio } });
+    expect((await loadAppState()).versions.frame).toEqual(d.versions.frame);
+    const mio = { x: 0.5, y: 0.1, w: 0.4, h: 0.8 };
+    await saveAppState({ ...d, versions: { ...d.versions, frame: mio, free: mio } });
+    expect((await loadAppState()).versions.frame).toEqual(mio);
   });
 });
