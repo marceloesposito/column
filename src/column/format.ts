@@ -189,9 +189,13 @@ export function displayName(s: Pick<Sheet, 'meta' | 'markdown'>, untitled: strin
   if (s.meta.name.trim()) return s.meta.name.trim();
   const first = s.markdown
     .split('\n')
+    // le definizioni delle note non sono il testo
+    .filter((l) => !/^\[\^[^\]]+\]:/.test(l))
     .map((l) =>
       l
         .replace(/^#{1,6}\s+|^>\s*|^[-*+]\s+|^\d+\.\s+/, '')
+        // richiami delle note
+        .replace(/\[\^[^\]]+\]/g, '')
         .replace(/<[^>]+>/g, '')
         .replace(/\\([\\`*_{}[\]()#+\-.!>~|])/g, '$1')
         .replace(/[*_`~[\]]/g, '')

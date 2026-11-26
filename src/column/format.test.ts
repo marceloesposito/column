@@ -61,6 +61,8 @@ describe('formato .clmn', () => {
   it('nomi', () => {
     expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: '\n\n## Il *mio* capitolo\ntesto' }, 'Senza titolo')).toBe('Il mio capitolo');
     expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: '' }, 'Senza titolo')).toBe('Senza titolo');
+    expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: 'Come scrive il giornale[^1]\n\n[^1]: Il Post, <https://x.it>\n' }, 'Senza titolo')).toBe('Come scrive il giornale');
+    expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: '[^1]\n\n[^1]: Solo la nota\n' }, 'Senza titolo')).toBe('Senza titolo');
     expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: '\\# Non un titolo <span data-color="red">rosso</span>' }, 'x')).toBe('# Non un titolo rosso');
     expect(displayName({ meta: { ...newSheet('a', new Date()).meta }, markdown: '|  |  |\n| --- | --- |\n| Anno | Dato |' }, 'x')).toBe('Anno Dato');
     expect(mediaName('a/b:c.png', ['b-c.png'])).toBe('a-b-c.png');
