@@ -24,6 +24,7 @@ import { t } from '../../i18n';
 import { loadComments } from '../comments/store';
 import { PageHints, setPagesListener } from './pageHints';
 import { CommentLayer } from '../comments/CommentLayer';
+import { FootnoteList } from './FootnoteList';
 import { EXCERPT_MIME, BLOCK_MIME } from '../tabula/dnd';
 import { dropBlockInText, excerptFromSelection } from '../tabula/bridge';
 
@@ -189,6 +190,7 @@ export function Scriptorium() {
             </DragHandle>
           )}
           <EditorContent editor={editor} />
+          {editor && <FootnoteList editor={editor} />}
           {editor && <CommentLayer editor={editor} />}
         </div>
       </div>

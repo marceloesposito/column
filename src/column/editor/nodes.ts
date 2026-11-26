@@ -4,6 +4,7 @@
 import { Node, Extension, mergeAttributes } from '@tiptap/core';
 import type { NodeViewRendererProps } from '@tiptap/core';
 import { t } from '../../i18n';
+import { notePlain } from '../footnotes';
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -129,7 +130,7 @@ export const Footnote = Node.create({
       const dom = document.createElement('sup');
       dom.className = 'fx-footnote';
       dom.contentEditable = 'false';
-      dom.title = String(node.attrs.text ?? '');
+      dom.title = notePlain(String(node.attrs.text ?? ''));
       dom.addEventListener('mousedown', (e) => {
         e.preventDefault();
         if (!editFootnote || typeof getPos !== 'function') return;

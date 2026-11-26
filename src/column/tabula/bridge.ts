@@ -1,9 +1,10 @@
 // Ponte fra testo e Tabula: una selezione diventa un estratto (ancorato al punto del testo), un
-// blocco rilasciato nel testo diventa paragrafo, immagine o collegamento.
+// blocco rilasciato nel testo diventa paragrafo, immagine o nota a piè di pagina con la fonte.
 import type { Editor } from '@tiptap/core';
 import { makeAnchor, reanchor, type Anchor } from 'logos/comments/model';
 import { flatText } from '../comments/anchors';
 import type { Block } from './model';
+import { sourceNote } from '../footnotes';
 
 export interface ExcerptData {
   text: string;
@@ -37,18 +38,20 @@ export function dropBlockInText(editor: Editor, json: string, pos?: number) {
   } catch {
     return;
   }
-  const at = pos ?? editor.state.selection.to;
-  const chain = editor.chain().focus();
-  if (b.kind === 'image' && b.src) chain.insertContentAt(at, { type: 'figure', attrs: { src: b.src, caption: b.text } }).run();
-  else if (b.kind === 'link' && b.url) chain.insertContentAt(at, { type: 'text', text: b.text || b.url, marks: [{ type: 'link', attrs: { href: b.url } }] }).run();
-  else if (b.text.trim()) {
-    const paras = b.text
-      .split(/\n{2,}/)
-      .map((p) => p.trim())
-      .filter(Boolean)
-      .map((p) => ({ type: 'paragraph', content: [{ type: 'text', text: p }] }));
-    chain.insertContentAt(at, paras).run();
-  }
+  const content = dropBlockDoc(b);
+  if (content) editor.chain().focus().insertContentAt(pos ?? editor.state.selection.to, content).run();
+}
+
+/** Cosa diventa nel testo un blocco rilasciato: una fonte (link) diventa una nota a piè di pagina. */
+export function dropBlockDoc(b: Block): object | object[] | null {
+  if (b.kind === 'image' && b.src) return { type: 'figure', attrs: { src: b.src, caption: b.text } };
+  if (b.kind === 'link' && b.url) return { type: 'footnote', attrs: { text: sourceNote(b.text, b.url) } };
+  const paras = b.text
+    .split(/\n{2,}/)
+    .map((p) => p.trim())
+    .filter(Boolean)
+    .map((p) => ({ type: 'paragraph', content: [{ type: 'text', text: p }] }));
+  return paras.length ? paras : null;
 }
 
 /** Blocchi ancorati al paragrafo dove sta il cursore (per illuminarli nella vista Entrambi). */

@@ -98,6 +98,8 @@ export const it: Record<string, string> = {
   'editor.placeholder.heading': 'Titolo',
   'node.toc': 'Rundown',
   'footnote.edit': 'Nota a piè di pagina',
+  'footnote.list': 'Note',
+  'footnote.empty': 'Nota vuota',
   'bar.text': 'Testo',
   'bar.tabula': 'Clips',
   'bar.versions': 'Editions',
